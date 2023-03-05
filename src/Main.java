@@ -39,10 +39,10 @@ public class Main {
                     System.out.println("Opção inválida. Tente novamente.");
                     escolha = Ler.umInt();
                 }
-                if (escolha != 0)
-                    menuModificarMetaDados(dados, escolha);
-                else
+                if (escolha == 0)
                     menuPrincipal(dados);
+                else
+                    menuModificarMetaDados(dados, escolha);
             }
             case 2 -> {
                 System.out.println("Qual o atributo que pretende criar uma hierarquia?");
@@ -54,10 +54,10 @@ public class Main {
                     System.out.println("Opção inválida. Tente novamente.");
                     escolha = Ler.umInt();
                 }
-                if (escolha != 0)
-                    menuCriarHierarquias(dados, escolha);
-                else
+                if (escolha == 0)
                     menuPrincipal(dados);
+                else
+                    menuCriarHierarquias(dados, escolha);
             }
             case 3 -> menuAnonimizarDados(dados);
             case 4 -> menuExportarDados(dados);
@@ -132,7 +132,9 @@ public class Main {
             System.out.println("Opção inválida. Tente novamente.");
             hierarquia = Ler.umInt();
         }
-        if (hierarquia == 1) {
+        if (hierarquia != 1) {
+            menuPrincipal(dados);
+        } else {
             System.out.println("Qual o tipo de hierarquia que pretende criar?\n");
             System.out.println("1- Hierarquia de intervalos (para variáveis numéricas)");
             System.out.println("2- Hierarquia de ordenação (para variáveis com escala ordinal)");
@@ -147,9 +149,8 @@ public class Main {
                 case 2 -> menuCriarHierarquiasOrdenacao(dados, escolha);
                 case 3 -> menuCriarHierarquiasMarcaramento(dados, escolha);
             }
-        } else {
-            menuPrincipal(dados);
         }
+
     }
 
     private static void menuCriarHierarquiasMarcaramento(Data dados, int escolha) {
@@ -230,7 +231,9 @@ public class Main {
             System.out.println("Opção inválida. Tente novamente.");
             modelo = Ler.umInt();
         }
-        if (modelo == 1) {
+        if (modelo != 1) {
+            menuPrincipal(dados);
+        } else {
             System.out.println("Qual o modelo de privacidade que pretende adicionar?\n");
             System.out.println("1- D-LDiversity");
             System.out.println("2- T-Closeness");
@@ -249,8 +252,6 @@ public class Main {
                 }
                 case 3 -> menuPrincipal(dados);
             }
-        } else {
-            menuPrincipal(dados);
         }
 
     }
