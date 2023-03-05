@@ -1,22 +1,22 @@
 import myinputs.Ler;
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.*;
+import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
 public class Main {
 
-    public static void menuPrincipal(Data dados) {
+    private static void menuPrincipal(Data dados) {
 
         int numColumns = dados.getHandle().getNumColumns();
         String[] headers = new String[numColumns];
         for (int i = 0; i < numColumns; i++)
             headers[i] = dados.getHandle().getAttributeName(i);
 
-        System.out.println("\t# Bem-vindo ao programa de anonimização de dados #\n\nO que pretende fazer?\n");
+        System.out.println("\t# Bem-vindo ao programa de anonimização de dados #\n\nO que pretende fazer?");
         System.out.println("1 - Modificar meta-dados dos atributos");
         System.out.println("2 - Criar hierarquias");
         System.out.println("3 - Anonimizar dados");
@@ -59,13 +59,13 @@ public class Main {
                 else
                     menuPrincipal(dados);
             }
-            case 3 -> menuAnonimizarDados();
+            case 3 -> menuAnonimizarDados(dados);
             case 4 -> menuExportarDados(dados);
             case 5 -> System.exit(0);
         }
     }
 
-    public static void menuModificarMetaDados(Data dados, int escolha) {
+    private static void menuModificarMetaDados(Data dados, int escolha) {
         // Variável
         System.out.println("Qual o tipo de dados que esta variável contém?\n");
         System.out.println("1- String");
@@ -107,7 +107,7 @@ public class Main {
             case 4 ->
                     dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
         }
-        // Metódo de transformação
+        /* Metódo de transformação
         System.out.println("Qual o método de transformação que pretende aplicar?\n");
         System.out.println("1- Generalização");
         System.out.println("2- Microagregação");
@@ -117,14 +117,14 @@ public class Main {
             System.out.println("Opção inválida. Tente novamente.");
             metodo = Ler.umInt();
         }
-        // Ainda não sei o que meter aqui...
+        */
 
         // Voltar ao menu principal
         menuPrincipal(dados);
     }
 
     public static void menuCriarHierarquias(Data dados, int escolha) {
-        System.out.println("Deseja criar uma hierarquia para esta variável?\n");
+        System.out.println("Deseja criar/importar uma hierarquia para esta variável?\n");
         System.out.println("1- Sim");
         System.out.println("2- Não");
         int hierarquia = Ler.umInt();
@@ -147,7 +147,48 @@ public class Main {
                 case 2 -> menuCriarHierarquiasOrdenacao(dados, escolha);
                 case 3 -> menuCriarHierarquiasMarcaramento(dados, escolha);
             }
+        } else {
+            menuPrincipal(dados);
         }
+    }
+
+    private static void menuCriarHierarquiasMarcaramento(Data dados, int escolha) {
+        System.out.println("Pretende criar ou importar uma hierarquia de marcaramento?\n");
+        DefaultHierarchy hierarchy = Hierarchy.create();
+
+    }
+
+    private static void menuCriarHierarquiasOrdenacao(Data dados, int escolha) {
+    }
+
+    private static void menuCriarHierarquiasIntervalos(Data dados, int escolha) {
+        System.out.println("Pretende criar ou importar uma hierarquia de intervalos?\n");
+        System.out.println("1- Criar");
+        System.out.println("2- Importar");
+        System.out.println("3- Voltar ao menu principal");
+        int opcao = Ler.umInt();
+        while (opcao < 1 || opcao > 3) {
+            System.out.println("Opção inválida. Tente novamente.");
+            opcao = Ler.umInt();
+        }
+        switch (opcao) {
+            case 1 -> {
+                // Criar hierarquia
+            }
+            case 2 -> {
+                System.out.println("Qual o nome do ficheiro que pretende importar?");
+                String nomeFicheiro = Ler.umaString();
+                Hierarchy hierarchy;
+                try {
+                    hierarchy = Hierarchy.create(nomeFicheiro, Charset.defaultCharset(), ';');
+                    dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                } catch (IOException e) {
+                    System.out.println("Erro ao importar a hierarquia.");
+                }
+            }
+            case 3 -> menuPrincipal(dados);
+        }
+
     }
 
     private static void menuExportarDados(Data data) {
@@ -161,16 +202,69 @@ public class Main {
         }
     }
 
-    private static void menuAnonimizarDados() {
+    private static void menuAnonimizarDados(Data dados) {
+        System.out.println("Qual o valor do K que pretende utilizar para a anonimização?");
+        int valorAnonimizacao = Ler.umInt();
+        while (valorAnonimizacao < 2) {
+            System.out.println("Valor inválido. Tente novamente.");
+            valorAnonimizacao = Ler.umInt();
+        }
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
+        config.addPrivacyModel(new KAnonymity(valorAnonimizacao));
+        config.setSuppressionLimit(1d); // 100% de supressão que é o padrão
+        try {
+            ARXResult result = anonymizer.anonymize(dados, config);
+            System.out.println("Qual o nome do ficheiro que pretende exportar?");
+            String nomeFicheiro = Ler.umaString();
+            result.getOutput(false).save(nomeFicheiro, ';');
+        } catch (IOException e) {
+            System.out.println("Erro ao anonimizar os dados.");
+        }
+
+        System.out.println("Pretende adicionar outro modelo de privacidade?\n");
+        System.out.println("1- Sim");
+        System.out.println("2- Não");
+        int modelo = Ler.umInt();
+        while (modelo < 1 || modelo > 2) {
+            System.out.println("Opção inválida. Tente novamente.");
+            modelo = Ler.umInt();
+        }
+        if (modelo == 1) {
+            System.out.println("Qual o modelo de privacidade que pretende adicionar?\n");
+            System.out.println("1- D-LDiversity");
+            System.out.println("2- T-Closeness");
+            System.out.println("3- Voltar ao menu principal");
+            int modeloPrivacidade = Ler.umInt();
+            while (modeloPrivacidade < 1 || modeloPrivacidade > 3) {
+                System.out.println("Opção inválida. Tente novamente.");
+                modeloPrivacidade = Ler.umInt();
+            }
+            switch (modeloPrivacidade) {
+                case 1 -> {
+                    // D-LDiversity
+                }
+                case 2 -> {
+                    // T-Closeness
+                }
+                case 3 -> menuPrincipal(dados);
+            }
+        } else {
+            menuPrincipal(dados);
+        }
+
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         System.out.println("Qual o ficheiro que pretende utilizar?");
         String ficheiro = Ler.umaString();
-        Data data = Data.create(ficheiro, Charset.defaultCharset(), ';');
-
-        menuPrincipal(data);
-
+        Data data;
+        try {
+            data = Data.create(ficheiro, Charset.defaultCharset(), ';');
+            menuPrincipal(data);
+        } catch (IOException e) {
+            System.out.println("Erro ao importar o ficheiro.");
+        }
     }
 }
