@@ -17,52 +17,52 @@ public class Main {
             headers[i] = dados.getHandle().getAttributeName(i);
 
         System.out.println("\t# Bem-vindo ao programa de anonimização de dados #\n\nO que pretende fazer?");
-        System.out.println("1 - Modificar meta-dados dos atributos");
-        System.out.println("2 - Criar hierarquias");
-        System.out.println("3 - Anonimizar dados");
-        System.out.println("4 - Exportar dados anonimizados");
-        System.out.println("5 - Sair");
-        int opcao = Ler.umInt();
-        while (opcao < 1 || opcao > 5) {
-            System.out.println("Opção inválida. Tente novamente.");
+        int opcao;
+        do {
+            System.out.println("1 - Modificar meta-dados dos atributos");
+            System.out.println("2 - Criar hierarquias");
+            System.out.println("3 - Anonimizar dados");
+            System.out.println("4 - Exportar dados anonimizados");
+            System.out.println("5 - Sair");
             opcao = Ler.umInt();
-        }
 
-        switch (opcao) {
-            case 1 -> {
-                System.out.println("Qual o atributo que pretende modificar?");
-                for (int i = 0; i < numColumns; i++)
-                    System.out.println(i + 1 + " - " + headers[i]);
-                System.out.println("0 - Voltar ao menu principal");
-                int escolha = Ler.umInt();
-                while (escolha < 0 || escolha > numColumns) {
-                    System.out.println("Opção inválida. Tente novamente.");
-                    escolha = Ler.umInt();
+            switch (opcao) {
+                case 1 -> {
+                    System.out.println("Qual o atributo que pretende modificar?");
+                    for (int i = 0; i < numColumns; i++)
+                        System.out.println(i + 1 + " - " + headers[i]);
+                    System.out.println("0 - Voltar ao menu principal");
+                    int escolha = Ler.umInt();
+                    while (escolha < 0 || escolha > numColumns) {
+                        System.out.println("Opção inválida. Tente novamente.");
+                        escolha = Ler.umInt();
+                    }
+                    if (escolha == 0)
+                        menuPrincipal(dados);
+                    else
+                        menuModificarMetaDados(dados, escolha);
                 }
-                if (escolha == 0)
-                    menuPrincipal(dados);
-                else
-                    menuModificarMetaDados(dados, escolha);
-            }
-            case 2 -> {
-                System.out.println("Qual o atributo que pretende criar uma hierarquia?");
-                for (int i = 0; i < numColumns; i++)
-                    System.out.println(i + 1 + "- " + headers[i]);
-                System.out.println("0 - Voltar ao menu principal");
-                int escolha = Ler.umInt();
-                while (escolha < 0 || escolha > numColumns) {
-                    System.out.println("Opção inválida. Tente novamente.");
-                    escolha = Ler.umInt();
+                case 2 -> {
+                    System.out.println("Qual o atributo que pretende criar uma hierarquia?");
+                    for (int i = 0; i < numColumns; i++)
+                        System.out.println(i + 1 + "- " + headers[i]);
+                    System.out.println("0 - Voltar ao menu principal");
+                    int escolha = Ler.umInt();
+                    while (escolha < 0 || escolha > numColumns) {
+                        System.out.println("Opção inválida. Tente novamente.");
+                        escolha = Ler.umInt();
+                    }
+                    if (escolha == 0)
+                        menuPrincipal(dados);
+                    else
+                        menuCriarHierarquias(dados, escolha);
                 }
-                if (escolha == 0)
-                    menuPrincipal(dados);
-                else
-                    menuCriarHierarquias(dados, escolha);
+                case 3 -> menuAnonimizarDados(dados);
+                case 4 -> menuExportarDados(dados);
+                case 5 -> System.exit(0);
+                default -> System.out.println("Opção inválida. Tente novamente.");
             }
-            case 3 -> menuAnonimizarDados(dados);
-            case 4 -> menuExportarDados(dados);
-            case 5 -> System.exit(0);
-        }
+        } while (opcao < 1 || opcao > 5);
     }
 
     private static void menuModificarMetaDados(Data dados, int escolha) {
@@ -135,22 +135,21 @@ public class Main {
         if (hierarquia != 1) {
             menuPrincipal(dados);
         } else {
-            System.out.println("Qual o tipo de hierarquia que pretende criar?\n");
-            System.out.println("1- Hierarquia de intervalos (para variáveis numéricas)");
-            System.out.println("2- Hierarquia de ordenação (para variáveis com escala ordinal)");
-            System.out.println("3- Hierarquia de marcaramento (para strings alfanuméricas)");
-            int tipoHierarquia = Ler.umInt();
-            while (tipoHierarquia < 1 || tipoHierarquia > 3) {
-                System.out.println("Opção inválida. Tente novamente.");
+            int tipoHierarquia;
+            do {
+                System.out.println("Qual o tipo de hierarquia que pretende criar?\n");
+                System.out.println("1- Hierarquia de intervalos (para variáveis numéricas)");
+                System.out.println("2- Hierarquia de ordenação (para variáveis com escala ordinal)");
+                System.out.println("3- Hierarquia de marcaramento (para strings alfanuméricas)");
                 tipoHierarquia = Ler.umInt();
-            }
-            switch (tipoHierarquia) {
-                case 1 -> menuCriarHierarquiasIntervalos(dados, escolha);
-                case 2 -> menuCriarHierarquiasOrdenacao(dados, escolha);
-                case 3 -> menuCriarHierarquiasMarcaramento(dados, escolha);
-            }
+                switch (tipoHierarquia) {
+                    case 1 -> menuCriarHierarquiasIntervalos(dados, escolha);
+                    case 2 -> menuCriarHierarquiasOrdenacao(dados, escolha);
+                    case 3 -> menuCriarHierarquiasMarcaramento(dados, escolha);
+                    default -> System.out.println("Opção inválida. Tente novamente.");
+                }
+            } while (tipoHierarquia < 1 || tipoHierarquia > 3);
         }
-
     }
 
     private static void menuCriarHierarquiasMarcaramento(Data dados, int escolha) {
@@ -163,33 +162,32 @@ public class Main {
     }
 
     private static void menuCriarHierarquiasIntervalos(Data dados, int escolha) {
-        System.out.println("Pretende criar ou importar uma hierarquia de intervalos?\n");
-        System.out.println("1- Criar");
-        System.out.println("2- Importar");
-        System.out.println("3- Voltar ao menu principal");
-        int opcao = Ler.umInt();
-        while (opcao < 1 || opcao > 3) {
-            System.out.println("Opção inválida. Tente novamente.");
+        int opcao;
+        do {
+            System.out.println("Pretende criar ou importar uma hierarquia de intervalos?\n");
+            System.out.println("1- Criar");
+            System.out.println("2- Importar");
+            System.out.println("3- Voltar ao menu principal");
             opcao = Ler.umInt();
-        }
-        switch (opcao) {
-            case 1 -> {
-                // Criar hierarquia
-            }
-            case 2 -> {
-                System.out.println("Qual o nome do ficheiro que pretende importar?");
-                String nomeFicheiro = Ler.umaString();
-                Hierarchy hierarchy;
-                try {
-                    hierarchy = Hierarchy.create(nomeFicheiro, Charset.defaultCharset(), ';');
-                    dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
-                } catch (IOException e) {
-                    System.out.println("Erro ao importar a hierarquia.");
+            switch (opcao) {
+                case 1 -> {
+                    // Criar hierarquia
                 }
+                case 2 -> {
+                    System.out.println("Qual o nome do ficheiro que pretende importar?");
+                    String nomeFicheiro = Ler.umaString();
+                    Hierarchy hierarchy;
+                    try {
+                        hierarchy = Hierarchy.create(nomeFicheiro, Charset.defaultCharset(), ';');
+                        dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                    } catch (IOException e) {
+                        System.out.println("Erro ao importar a hierarquia.");
+                    }
+                }
+                case 3 -> menuPrincipal(dados);
+                default -> System.out.println("Opção inválida. Tente novamente.");
             }
-            case 3 -> menuPrincipal(dados);
-        }
-
+        } while (opcao != 3);
     }
 
     private static void menuExportarDados(Data data) {
