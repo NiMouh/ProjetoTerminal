@@ -1,8 +1,8 @@
 import myinputs.Ler;
 import org.deidentifier.arx.*;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.criteria.KAnonymity;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -19,11 +19,14 @@ public class Main {
         System.out.println("\t# Bem-vindo ao programa de anonimização de dados #\n\nO que pretende fazer?");
         int opcao;
         do {
-            System.out.println("1 - Modificar meta-dados dos atributos");
-            System.out.println("2 - Criar hierarquias");
-            System.out.println("3 - Anonimizar dados");
-            System.out.println("4 - Exportar dados anonimizados");
-            System.out.println("5 - Sair");
+            System.out.println("""
+                    1 - Modificar meta-dados dos atributos
+                    2 - Criar hierarquias
+                    3 - Anonimizar dados
+                    4 - Exportar dados anonimizados
+                    5 - Gerar Estatísticas
+                    6 - Sair
+                    """);
             opcao = Ler.umInt();
 
             switch (opcao) {
@@ -59,54 +62,63 @@ public class Main {
                 }
                 case 3 -> menuAnonimizarDados(dados);
                 case 4 -> menuExportarDados(dados);
-                case 5 -> System.exit(0);
+                case 5 -> menuEstatisticas(dados);
+                case 6 -> System.exit(0);
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
         } while (opcao < 1 || opcao > 5);
     }
 
-    private static void menuModificarMetaDados(Data dados, int escolha) {
-        // Variável
-        System.out.println("Qual o tipo de dados que esta variável contém?\n");
-        System.out.println("1- String");
-        System.out.println("2- Integer");
-        System.out.println("3- Date/Time");
-        System.out.println("4- Decimal");
-        System.out.println("5- Ordinal");
-        int tipo = Ler.umInt();
-        while (tipo < 1 || tipo > 5) {
-            System.out.println("Opção inválida. Tente novamente.");
-            tipo = Ler.umInt();
-        }
-        switch (tipo) {
-            case 1 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.STRING);
-            case 2 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.INTEGER);
-            case 3 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DATE);
-            case 4 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DECIMAL);
-            case 5 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.ORDERED_STRING);
-        }
+    private static void menuEstatisticas(Data dados) {
 
-        // Identificador
-        System.out.println("Qual o tipo de identificador que esta variável contém?\n");
-        System.out.println("1- Identificador");
-        System.out.println("2- Identificador sensível");
-        System.out.println("3- Identificador não sensível");
-        System.out.println("4- Quase identificador");
-        int identificador = Ler.umInt();
-        while (identificador < 1 || identificador > 4) {
-            System.out.println("Opção inválida. Tente novamente.");
+    }
+
+    private static void menuModificarMetaDados(Data dados, int escolha) {
+        // Tipo de Variável
+        int tipo;
+        do {
+            System.out.println("""
+                    Qual o tipo de dados que esta variável contém?
+                    1- String
+                    2- Integer
+                    3- Date/Time
+                    4- Decimal
+                    5- Ordinal
+                    """);
+            tipo = Ler.umInt();
+
+            switch (tipo) {
+                case 1 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.STRING);
+                case 2 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.INTEGER);
+                case 3 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DATE);
+                case 4 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DECIMAL);
+                case 5 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.ORDERED_STRING);
+                default -> System.out.println("Opção inválida. Tente novamente.");
+            }
+        } while (tipo < 1 || tipo > 5);
+
+        // Tipo de Identificador
+        int identificador;
+        do {
+            System.out.println("""
+                    Qual o tipo de identificador que esta variável contém?
+                    1- Identificador
+                    2- Identificador sensível
+                    3- Identificador não sensível
+                    4- Quase identificador
+                    """);
             identificador = Ler.umInt();
-        }
-        switch (identificador) {
-            case 1 ->
-                    dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.IDENTIFYING_ATTRIBUTE);
-            case 2 ->
-                    dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.SENSITIVE_ATTRIBUTE);
-            case 3 ->
-                    dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.INSENSITIVE_ATTRIBUTE);
-            case 4 ->
-                    dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-        }
+            switch (identificador) {
+                case 1 ->
+                        dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.IDENTIFYING_ATTRIBUTE);
+                case 2 ->
+                        dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.SENSITIVE_ATTRIBUTE);
+                case 3 ->
+                        dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.INSENSITIVE_ATTRIBUTE);
+                case 4 ->
+                        dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+            }
+        } while (identificador < 1 || identificador > 4);
         /* Metódo de transformação
         System.out.println("Qual o método de transformação que pretende aplicar?\n");
         System.out.println("1- Generalização");
@@ -124,9 +136,11 @@ public class Main {
     }
 
     public static void menuCriarHierarquias(Data dados, int escolha) {
-        System.out.println("Deseja criar/importar uma hierarquia para esta variável?\n");
-        System.out.println("1- Sim");
-        System.out.println("2- Não");
+        System.out.println("""
+                Deseja criar/importar uma hierarquia para esta variável?
+                1- Sim
+                2- Não
+                """);
         int hierarquia = Ler.umInt();
         while (hierarquia < 1 || hierarquia > 2) {
             System.out.println("Opção inválida. Tente novamente.");
@@ -154,24 +168,104 @@ public class Main {
 
     private static void menuCriarHierarquiasMarcaramento(Data dados, int escolha) {
         System.out.println("Pretende criar ou importar uma hierarquia de marcaramento?\n");
-        DefaultHierarchy hierarchy = Hierarchy.create();
-
+        int opcao;
+        do {
+            System.out.printf("""
+                    Pretende criar ou importar uma hierarquia de marcaramento para a variável %s?
+                    1- Sim
+                    2- Não
+                    """, dados.getHandle().getAttributeName(escolha));
+            opcao = Ler.umInt();
+            switch (opcao) {
+                case 1 -> {
+                    // Criar hierarquia
+                }
+                case 2 -> {
+                    System.out.println("Qual o nome do ficheiro que pretende importar?");
+                    String nomeFicheiro = Ler.umaString();
+                    Hierarchy hierarchy;
+                    try {
+                        hierarchy = Hierarchy.create(nomeFicheiro, Charset.defaultCharset(), ';');
+                        // Aplicar a hierarquia à variável
+                        dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                default -> System.out.println("Opção inválida. Tente novamente.");
+            }
+        } while (opcao < 1 || opcao > 2);
     }
 
     private static void menuCriarHierarquiasOrdenacao(Data dados, int escolha) {
+        int opcao;
+        do {
+            System.out.printf("""
+                    Pretende criar ou importar uma hierarquia de intervalos para a variável %s?
+                    1- Sim
+                    2- Não
+                    3- Voltar ao menu principal
+                    """, dados.getHandle().getAttributeName(escolha));
+            opcao = Ler.umInt();
+            switch (opcao) {
+                case 1 -> {
+                    // Criar hierarquia
+                }
+                case 2 -> {
+                    System.out.println("Qual o nome do ficheiro que pretende importar?");
+                    String nomeFicheiro = Ler.umaString();
+                    Hierarchy hierarchy;
+                    try {
+                        hierarchy = Hierarchy.create(nomeFicheiro, Charset.defaultCharset(), ';');
+                        // Aplicar a hierarquia à variável
+                        dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                    } catch (IOException e) {
+                        System.out.println("Erro ao importar a hierarquia.");
+                    }
+                }
+                case 3 -> menuPrincipal(dados);
+                default -> System.out.println("Opção inválida. Tente novamente.");
+            }
+        } while (opcao < 1 || opcao > 3 || opcao == 3);
     }
 
     private static void menuCriarHierarquiasIntervalos(Data dados, int escolha) {
         int opcao;
         do {
-            System.out.println("Pretende criar ou importar uma hierarquia de intervalos?\n");
-            System.out.println("1- Criar");
-            System.out.println("2- Importar");
-            System.out.println("3- Voltar ao menu principal");
+            System.out.printf("""
+                    Pretende criar ou importar uma hierarquia de intervalos para a variável %s?
+                    1- Sim
+                    2- Não
+                    3- Voltar ao menu principal
+                    """, dados.getHandle().getAttributeName(escolha));
             opcao = Ler.umInt();
             switch (opcao) {
                 case 1 -> {
-                    // Criar hierarquia
+                    if (dados.getHandle().getDataType(dados.getHandle().getAttributeName(escolha)) == DataType.INTEGER){
+                        System.out.println("Qual o valor mínimo do intervalo?");
+                        int minimo = Ler.umInt();
+                        System.out.println("Qual o valor máximo do intervalo?");
+                        int maximo = Ler.umInt();
+                        System.out.println("Quantos níveis de intervalos pretende criar?");
+                        int niveisIntervalos = Ler.umInt();
+                        HierarchyBuilderIntervalBased<Long> builder = HierarchyBuilderIntervalBased.create(DataType.INTEGER);
+                        // Ainda não sei adicionar intervalos
+                        Hierarchy hierarchy = builder.build();
+                        // Aplicar a hierarquia à variável
+                        dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                    } else if (dados.getHandle().getDataType(dados.getHandle().getAttributeName(escolha)) == DataType.DECIMAL){
+                        System.out.println("Qual o valor mínimo do intervalo?");
+                        double minimo = Ler.umDouble();
+                        System.out.println("Qual o valor máximo do intervalo?");
+                        double maximo = Ler.umDouble();
+                        System.out.println("Quantos níveis de intervalos pretende criar?");
+                        int niveisIntervalos = Ler.umInt();
+                        HierarchyBuilderIntervalBased<Double> builder = HierarchyBuilderIntervalBased.create(DataType.DECIMAL);
+                        // Ainda não sei adicionar intervalos
+                        Hierarchy hierarchy = builder.build();
+                        // Aplicar a hierarquia à variável
+                        dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                    }
                 }
                 case 2 -> {
                     System.out.println("Qual o nome do ficheiro que pretende importar?");
@@ -187,7 +281,7 @@ public class Main {
                 case 3 -> menuPrincipal(dados);
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
-        } while (opcao != 3);
+        } while (opcao < 1 || opcao > 3 || opcao == 3);
     }
 
     private static void menuExportarDados(Data data) {
@@ -220,10 +314,11 @@ public class Main {
         } catch (IOException e) {
             System.out.println("Erro ao anonimizar os dados.");
         }
-
-        System.out.println("Pretende adicionar outro modelo de privacidade?\n");
-        System.out.println("1- Sim");
-        System.out.println("2- Não");
+        System.out.println("""
+                Pretende adicionar outro modelo de privacidade?
+                1- Sim
+                2- Não
+                """);
         int modelo = Ler.umInt();
         while (modelo < 1 || modelo > 2) {
             System.out.println("Opção inválida. Tente novamente.");
@@ -232,10 +327,12 @@ public class Main {
         if (modelo != 1) {
             menuPrincipal(dados);
         } else {
-            System.out.println("Qual o modelo de privacidade que pretende adicionar?\n");
-            System.out.println("1- D-LDiversity");
-            System.out.println("2- T-Closeness");
-            System.out.println("3- Voltar ao menu principal");
+            System.out.println("""
+                    Qual o modelo de privacidade que pretende adicionar?
+                    1- D-LDiversity
+                    2- T-Closeness
+                    3- Voltar ao menu principal
+                    """);
             int modeloPrivacidade = Ler.umInt();
             while (modeloPrivacidade < 1 || modeloPrivacidade > 3) {
                 System.out.println("Opção inválida. Tente novamente.");
@@ -249,6 +346,7 @@ public class Main {
                     // T-Closeness
                 }
                 case 3 -> menuPrincipal(dados);
+                default -> System.out.println("Opção inválida. Tente novamente.");
             }
         }
 
