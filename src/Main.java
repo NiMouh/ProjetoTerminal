@@ -6,6 +6,7 @@ import org.deidentifier.arx.criteria.KAnonymity;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Date;
 
 public class Main {
 
@@ -33,14 +34,14 @@ public class Main {
                 case 1 -> {
                     System.out.println("Qual o atributo que pretende modificar?");
                     for (int i = 0; i < numColumns; i++)
-                        System.out.println(i + 1 + " - " + headers[i]);
-                    System.out.println("0 - Voltar ao menu principal");
+                        System.out.println(i + " - " + headers[i]);
+                    System.out.println(numColumns + " - Voltar ao menu principal");
                     int escolha = Ler.umInt();
                     while (escolha < 0 || escolha > numColumns) {
                         System.out.println("Opção inválida. Tente novamente.");
                         escolha = Ler.umInt();
                     }
-                    if (escolha == 0)
+                    if (escolha == numColumns)
                         menuPrincipal(dados);
                     else
                         menuModificarMetaDados(dados, escolha);
@@ -48,14 +49,14 @@ public class Main {
                 case 2 -> {
                     System.out.println("Qual o atributo que pretende criar uma hierarquia?");
                     for (int i = 0; i < numColumns; i++)
-                        System.out.println(i + 1 + "- " + headers[i]);
-                    System.out.println("0 - Voltar ao menu principal");
+                        System.out.println(i + "- " + headers[i]);
+                    System.out.println(numColumns + " - Voltar ao menu principal");
                     int escolha = Ler.umInt();
                     while (escolha < 0 || escolha > numColumns) {
                         System.out.println("Opção inválida. Tente novamente.");
                         escolha = Ler.umInt();
                     }
-                    if (escolha == 0)
+                    if (escolha == numColumns)
                         menuPrincipal(dados);
                     else
                         menuCriarHierarquias(dados, escolha);
@@ -88,15 +89,18 @@ public class Main {
             tipo = Ler.umInt();
 
             switch (tipo) {
-                case 1 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.STRING);
-                case 2 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.INTEGER);
-                case 3 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DATE);
-                case 4 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DECIMAL);
-                case 5 -> dados.getHandle().getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.ORDERED_STRING);
+                case 1 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.STRING);
+                case 2 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.INTEGER);
+                case 3 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DATE);
+                case 4 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DECIMAL);
+                case 5 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.ORDERED_STRING);
                 default -> System.out.println("Opção inválida. Tente novamente.");
-            }
+            } // Colocar condição para quando o utilizador insere tipo inválido (Parsing Exception)
         } while (tipo < 1 || tipo > 5);
 
+        String[] coluna = dados.getHandle().getDistinctValues(escolha);
+        for (String s : coluna)
+            System.out.println(s);
         // Tipo de Identificador
         int identificador;
         do {
@@ -109,14 +113,11 @@ public class Main {
                     """);
             identificador = Ler.umInt();
             switch (identificador) {
-                case 1 ->
-                        dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.IDENTIFYING_ATTRIBUTE);
-                case 2 ->
-                        dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.SENSITIVE_ATTRIBUTE);
-                case 3 ->
-                        dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.INSENSITIVE_ATTRIBUTE);
+                case 1 -> dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.IDENTIFYING_ATTRIBUTE);
+                case 2 -> dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.SENSITIVE_ATTRIBUTE);
+                case 3 -> dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.INSENSITIVE_ATTRIBUTE);
                 case 4 ->
-                        dados.getHandle().getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+                        dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
             }
         } while (identificador < 1 || identificador > 4);
         /* Metódo de transformação
@@ -241,7 +242,7 @@ public class Main {
             opcao = Ler.umInt();
             switch (opcao) {
                 case 1 -> {
-                    if (dados.getHandle().getDataType(dados.getHandle().getAttributeName(escolha)) == DataType.INTEGER){
+                    if (dados.getDefinition().getDataType(dados.getHandle().getAttributeName(escolha)) == DataType.INTEGER) {
                         System.out.println("Qual o valor mínimo do intervalo?");
                         int minimo = Ler.umInt();
                         System.out.println("Qual o valor máximo do intervalo?");
@@ -252,8 +253,8 @@ public class Main {
                         // Ainda não sei adicionar intervalos
                         Hierarchy hierarchy = builder.build();
                         // Aplicar a hierarquia à variável
-                        dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
-                    } else if (dados.getHandle().getDataType(dados.getHandle().getAttributeName(escolha)) == DataType.DECIMAL){
+                        dados.getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                    } else if (dados.getDefinition().getDataType(dados.getHandle().getAttributeName(escolha)) == DataType.DECIMAL) {
                         System.out.println("Qual o valor mínimo do intervalo?");
                         double minimo = Ler.umDouble();
                         System.out.println("Qual o valor máximo do intervalo?");
@@ -264,7 +265,7 @@ public class Main {
                         // Ainda não sei adicionar intervalos
                         Hierarchy hierarchy = builder.build();
                         // Aplicar a hierarquia à variável
-                        dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                        dados.getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
                     }
                 }
                 case 2 -> {
@@ -273,7 +274,7 @@ public class Main {
                     Hierarchy hierarchy;
                     try {
                         hierarchy = Hierarchy.create(nomeFicheiro, Charset.defaultCharset(), ';');
-                        dados.getHandle().getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
+                        dados.getDefinition().setHierarchy(dados.getHandle().getAttributeName(escolha), hierarchy);
                     } catch (IOException e) {
                         System.out.println("Erro ao importar a hierarquia.");
                     }
