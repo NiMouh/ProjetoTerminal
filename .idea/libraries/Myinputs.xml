@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="Myinputs">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../SD/Myinputs.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../API/Myinputs.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

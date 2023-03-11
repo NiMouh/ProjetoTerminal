@@ -6,7 +6,6 @@ import org.deidentifier.arx.criteria.KAnonymity;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Date;
 
 public class Main {
 
@@ -89,18 +88,21 @@ public class Main {
             tipo = Ler.umInt();
 
             switch (tipo) {
-                case 1 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.STRING);
-                case 2 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.INTEGER);
+                case 1 ->
+                        dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.STRING);
+                case 2 ->
+                        dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.INTEGER);
                 case 3 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DATE);
-                case 4 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DECIMAL);
-                case 5 -> dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.ORDERED_STRING);
+                case 4 ->
+                        dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.DECIMAL);
+                case 5 ->
+                        dados.getDefinition().setDataType(dados.getHandle().getAttributeName(escolha), DataType.ORDERED_STRING);
                 default -> System.out.println("Opção inválida. Tente novamente.");
             } // Colocar condição para quando o utilizador insere tipo inválido (Parsing Exception)
         } while (tipo < 1 || tipo > 5);
 
-        String[] coluna = dados.getHandle().getDistinctValues(escolha);
-        for (String s : coluna)
-            System.out.println(s);
+        // Print the current data type
+        System.out.println("O tipo de dados agora é: " + dados.getDefinition().getDataType(dados.getHandle().getAttributeName(escolha)));
         // Tipo de Identificador
         int identificador;
         do {
@@ -113,13 +115,19 @@ public class Main {
                     """);
             identificador = Ler.umInt();
             switch (identificador) {
-                case 1 -> dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.IDENTIFYING_ATTRIBUTE);
-                case 2 -> dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.SENSITIVE_ATTRIBUTE);
-                case 3 -> dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.INSENSITIVE_ATTRIBUTE);
+                case 1 ->
+                        dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.IDENTIFYING_ATTRIBUTE);
+                case 2 ->
+                        dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.SENSITIVE_ATTRIBUTE);
+                case 3 ->
+                        dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.INSENSITIVE_ATTRIBUTE);
                 case 4 ->
                         dados.getDefinition().setAttributeType(dados.getHandle().getAttributeName(escolha), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
             }
         } while (identificador < 1 || identificador > 4);
+
+        // Print the current attribute type
+        System.out.println("O tipo de identificador agora é: " + dados.getDefinition().getAttributeType(dados.getHandle().getAttributeName(escolha)));
         /* Metódo de transformação
         System.out.println("Qual o método de transformação que pretende aplicar?\n");
         System.out.println("1- Generalização");
