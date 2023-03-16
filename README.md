@@ -1,26 +1,5 @@
 # Apontamentos para o projeto final de curso
 
-## Objetivo
-
-**Automatizar** processos de **anonimização** de dados usando a ferramenta ARX. Vão ser recebidos um conjunto de dados
-de
-entrada num formato de ficheiro CSV/Excel e o utilizador vai escolher o modelo de anonimização e privacidade que quer
-aplicar. O programa vai gerar um ficheiro de saída com os dados anonimizados e um relatório com as estatísticas do
-processo de anonimização. Resumindo:
-
-1. **Aplicar** o modelo de privacidade ao conjunto de dados de entrada num processo automático.
-2. **Quantificar** o risco da divulgação de informação sensível ou reidentificação.
-3. **Avaliar** a utilidade dos dados.
-
-## Motivação
-
-A anonimização de dados é importante salvaguardar a privacidade dos indivíduos, impossibilitando a identificação direta
-ou indireta de indivíduos a partir desses dados. Empresas e governos devem usar esses dados seguramente e responsável, e
-há vários exemplos de vazamentos de dados que ilustram a importância da anonimização. Os casos mais conhecidos incluem a
-*Equifax*, que sofreu um vazamento de dados em 2017, e o *Facebook*, em 2018. A falta de anonimização de dados pode
-levar a problemas de privacidade e segurança, e as empresas devem implementar medidas adequadas de anonimização para
-garantir a proteção dos dados sensíveis.
-
 ## Estado-da-arte
 
 ### Introdução
@@ -36,6 +15,27 @@ dos indivíduos e adotem medidas adequadas de segurança e anonimização.
 
 Neste capítulo, vai ser falado sobre a ferramenta que nos vai auxiliar na automatização do processo de anonimização de
 dados, nas técnicas de anonimização e privacidade e nos modelos de privacidade.
+
+### Objetivo
+
+**Automatizar** processos de **anonimização** de dados usando a ferramenta ARX. Vão ser recebidos um conjunto de dados
+de
+entrada num formato de ficheiro CSV/Excel e o utilizador vai escolher o modelo de anonimização e privacidade que quer
+aplicar. O programa vai gerar um ficheiro de saída com os dados anonimizados e um relatório com as estatísticas do
+processo de anonimização. Resumindo:
+
+1. **Aplicar** o modelo de privacidade ao conjunto de dados de entrada num processo automático.
+2. **Quantificar** o risco da divulgação de informação sensível ou reidentificação.
+3. **Avaliar** a utilidade dos dados.
+
+### Motivação
+
+A anonimização de dados é importante salvaguardar a privacidade dos indivíduos, impossibilitando a identificação direta
+ou indireta de indivíduos a partir desses dados. Empresas e governos devem usar esses dados seguramente e responsável, e
+há vários exemplos de vazamentos de dados que ilustram a importância da anonimização. Os casos mais conhecidos incluem a
+*Equifax*, que sofreu um vazamento de dados em 2017, e o *Facebook*, em 2018. A falta de anonimização de dados pode
+levar a problemas de privacidade e segurança, e as empresas devem implementar medidas adequadas de anonimização para
+garantir a proteção dos dados sensíveis.
 
 ### ARX - A Tool for Data Anonymization
 
@@ -90,6 +90,16 @@ de, que os dados sensíveis não são divulgados (reidentificados).
 O modelo de privacidade diferencial de Gauss é um modelo de privacidade que garante que os dados sensíveis não são
 divulgados e que os dados não são reidentificados. O modelo de privacidade diferencial de Gauss é baseado no princípio
 de, que os dados sensíveis não são divulgados (reidentificados).
+
+### Conclusão
+
+Em suma, a automatização da anonimização de dados é uma solução relevante para empresas e organizações que precisam
+lidar com grandes volumes de informações sensíveis e precisam cumprir as leis de proteção de dados, como o RGPD. A
+ferramenta ARX é uma opção eficiente para implementar esse processo, permitindo a aplicação de modelos de privacidade,
+como o *K-Anonymity*, *L-Diversity* e *T-Closeness*, para garantir a proteção dos dados e evitar a divulgação de
+informações sensíveis. A anonimização de dados é uma questão importante para garantir a privacidade e segurança dos
+indivíduos, e a automatização desse processo pode ajudar empresas e organizações a cumprir com as suas obrigações legais
+e éticas.
 
 ## Engenharia de Software
 
@@ -150,7 +160,7 @@ Estes são os passos que o utilizador deve seguir para anonimizar os dados, nest
 * [ ] Ler ficheiro de entrada
 * [ ] Definir o tipo de metadados e o tipo de atributos
     * [ ] Caso seja um tipo 'sensivel', definir algoritmo de generalização/supressão (criar/exportar hierarquia)
-    * [ ] Caso seja um tipo 'indentificador', eliminar o atributo
+    * [ ] Caso seja um tipo 'indentificador', suprimir o atributo
     * [ ] Caso seja um tipo 'quase identificador', definir algoritmo de generalização/supressão (criar/exportar
       hierarquia)
     * [ ] Caso seja um tipo 'insensivel', não fazer nada

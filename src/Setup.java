@@ -2,6 +2,9 @@ import myinputs.Ler;
 import org.deidentifier.arx.*;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -101,7 +104,8 @@ public class Setup {
                     case 1 -> dados.getDefinition().setAttributeType(nomeColuna, AttributeType.IDENTIFYING_ATTRIBUTE);
                     case 2 -> dados.getDefinition().setAttributeType(nomeColuna, AttributeType.SENSITIVE_ATTRIBUTE);
                     case 3 -> dados.getDefinition().setAttributeType(nomeColuna, AttributeType.INSENSITIVE_ATTRIBUTE);
-                    case 4 -> dados.getDefinition().setAttributeType(nomeColuna, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+                    case 4 ->
+                            dados.getDefinition().setAttributeType(nomeColuna, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
                     default -> System.out.println("Opção inválida");
                 }
             } while (tipoColuna < 1 || tipoColuna > 4);
@@ -133,17 +137,39 @@ public class Setup {
         String nomeColuna = dados.getHandle().getAttributeName(indexColuna);
 
         // If the column has data type integer, create a hiearchy based on intervals
-        if (dados.getHandle().getDataType(nomeColuna) == DataType.INTEGER){
-            // TODO
+        if (dados.getHandle().getDataType(nomeColuna) == DataType.INTEGER) {
+            // Criar a função de agregação para intervalos (createIntervalFunction)
+            // Definir o valor máximo e minimo de alcance (range)
+            System.out.println("Qual o valor mínimo do intervalo?");
+            int minimoRange = Ler.umInt();
+            System.out.println("Qual o valor máximo do intervalo?");
+            int maximoRange = Ler.umInt();
+            // Escrever range...
+            Range<Integer> rangeMin = new Range<>(minimoRange, minimoRange, minimoRange);
+            Range<Integer> rangeMax = new Range<>(maximoRange, maximoRange, maximoRange + 20);
+            // Designar o intervalor inicial (start)
+            System.out.println("Qual o valor inicial do intervalo?");
+            int valorInicial = Ler.umInt();
+            System.out.println("Qual o valor final do intervalo?");
+            int valorFinal = Ler.umInt();
+            // Escrever intervalo...
+            // Definir o número de intervalos (size do Group)
+            System.out.println("Qual o número de intervalos?");
+            int numeroIntervalos = Ler.umInt();
+            /*
+            HierarchyBuilder<NumberInterval> builder = new HierarchyBuilderInterval(DataType.INTEGER, rangeMin, rangeMax);
+            builder.add(start, size);
+            HierarchyBuilder.IntervalFunction<NumberInterval> function = builder.createIntervalFunction();
+            * */
         }
 
         // If the column has data type ordinal, create a hiearchy based on ordering
-        if (dados.getHandle().getDataType(nomeColuna) == DataType.ORDERED_STRING){
+        if (dados.getHandle().getDataType(nomeColuna) == DataType.ORDERED_STRING) {
             // TODO
         }
 
         // If the column has data type string, create a hiearchy based on masking
-        if (dados.getHandle().getDataType(nomeColuna) == DataType.STRING){
+        if (dados.getHandle().getDataType(nomeColuna) == DataType.STRING) {
             // TODO
         }
 
