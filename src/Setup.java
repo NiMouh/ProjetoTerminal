@@ -2,8 +2,6 @@ import myinputs.Ler;
 import org.deidentifier.arx.*;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
-import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
@@ -52,7 +50,7 @@ public class Setup {
                 case 3 -> defineHierarquias(dados);
                 case 4 -> anonimizarDados(dados);
                 case 5 -> exportarDados(dados);
-                case 6 -> gerarEstatisticas(dados);
+                case 6 -> gerarEstatisticas(dados,dados);
                 case 7 -> System.out.println("Até à próxima!");
                 default -> System.out.println("Opção inválida");
             }
@@ -250,8 +248,31 @@ public class Setup {
 
     }
 
-    public void gerarEstatisticas(Data dados) {
-        // TODO
+    public int dadosSuprimidos(Data dados) {
+        int dadosSuprimidos = 0;
+        int tamanhoOriginal = dados.getHandle().getNumRows();
+        for (int index = 0 ; index < tamanhoOriginal ; index++) {
+            if (dados.getHandle().isSuppressed(index)) {
+                dadosSuprimidos++;
+            }
+        }
+        return dadosSuprimidos;
+    }
+
+    public void gerarEstatisticas(Data dadosOriginais, Data dadosAnonimizados) {
+        // Exibir a quantidade de dados restantes e suprimidos em relação ao original
+        int dadosSuprimidos = dadosSuprimidos(dadosAnonimizados);
+        int tamanhoOriginal = dadosAnonimizados.getHandle().getNumRows();
+        System.out.println("Number of original records: " + dadosOriginais.getHandle().getNumRows());
+        System.out.println("Number of measurements: (inc. Supressed)" + tamanhoOriginal);
+        System.out.println("Number of measurements: (exc. Supressed)" + (tamanhoOriginal - dadosSuprimidos));
+
+        // Exibir o risco estimado de reidentificação ('prosecutor risk', 'journalist risk', 'marketer risk')
+        // Path process -> DataHandle -> RiskEstimate -> RiskModelSampleRisks
+
+
+        // Exibir nível de qualidade do conjunto de dados anonimizados
+        // Path process -> DataHandle -> StatisticsBuilder -> StatisticsQuality
     }
 
     public static void exportarDados(Data dados) {

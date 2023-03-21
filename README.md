@@ -169,7 +169,15 @@ Estes são os passos que o utilizador deve seguir para anonimizar os dados, nest
     * [ ] Definir o tamanho do grupo (k-anonimato)
     * [ ] Caso desejado definir a diversidade (l-diversidade) e a diferença (t-closeness)
     * [ ] Devolver a tabelo dos dados anonimizados
-* [ ] Guardar os ficheiro anonimizado e guardar as estatísticas numa variável
+* [ ] Guardar os ficheiros anonimizados
+* [ ] Exibir estatísticas sobre a segurança dos dados
+    * [ ] Exibir a quantidade de dados restantes em relação ao original
+    * [ ] Exibir o risco estimado de reidentificação ('prosecutor risk', 'journalist risk', 'marketer risk')
+    * [ ] Exibir nível de qualidade do conjunto de dados anonimizados, como:
+        * [ ] Generalization intensity (taxa de generalização)
+        * [ ] Granularity (taxa de detalhe)
+        * [ ] Discernability (taxa de certeza)
+        * [ ] ...
 
 ## Auxílios
 
