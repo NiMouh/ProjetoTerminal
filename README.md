@@ -171,13 +171,99 @@ Estes são os passos que o utilizador deve seguir para anonimizar os dados, nest
     * [ ] Devolver a tabelo dos dados anonimizados
 * [ ] Guardar os ficheiros anonimizados
 * [ ] Exibir estatísticas sobre a segurança dos dados
-    * [ ] Exibir a quantidade de dados restantes em relação ao original
-    * [ ] Exibir o risco estimado de reidentificação ('prosecutor risk', 'journalist risk', 'marketer risk')
-    * [ ] Exibir nível de qualidade do conjunto de dados anonimizados, como:
-        * [ ] Generalization intensity (taxa de generalização)
-        * [ ] Granularity (taxa de detalhe)
-        * [ ] Discernability (taxa de certeza)
+    * [ ] Exibir a quantidade de dados restantes em relação ao original:
+        * [ ] Dados restantes;
+        * [ ] Dados suprimidos;
+    * [ ] Exibir o risco estimado de reidentificação:
+        * [ ] Prosecutor Risk: risco de ser acusado de um crime;
+        * [ ] Journalist Risk: risco de ser exposto por um jornalista;
+        * [ ] Marketer Risk: risco de ser exposto por um marketing;
+    * [ ] Exibir nível de qualidade do conjunto de dados anonimizados:
+        * [ ] Taxa de Generalização (Generalization intensity);
+        * [ ] Taxa de Detalhe (Granularity);
+        * [ ] Taxa de Identificabilidade (Discernability);
         * [ ] ...
+
+## Estatísticas
+
+### Introdução
+
+As estatísticas são uma parte fundamental de qualquer aplicação de automatização de processos de anonimização. Permitem
+aos utilizadores avaliar o nível de segurança dos dados anonimizados e a qualidade do conjunto de dados resultante. Além
+disso, as estatísticas ajudam a atenuar o risco de reidentificação, permitindo que os utilizadores avaliem o risco de
+serem expostos por jornalistas, marketers e outros agentes. Neste capítulo, vamos explorar a importância das
+estatísticas numa aplicação de automatização de processos de anonimização, discutindo as principais métricas e como elas
+podem ser usadas para avaliar a eficácia da anonimização.
+
+### Quantidade de Dados Restantes
+
+A quantidade de dados restantes é uma métrica que permite aos utilizadores avaliar o nível de perda de informação que
+ocorreu durante o processo de anonimização. Esta métrica é calculada dividindo o número de registros anonimizados pelo
+número de registros originais. Quanto maior for o valor desta métrica, maior será a quantidade de dados restantes. O
+nosso objetivo é manter o maior número de dados possível, para que a anonimização não prejudique a qualidade dos dados.
+
+### Nível de Risco
+
+A avaliação do nível de risco é uma das estatísticas-chave numa aplicação de automatização de processos de anonimização.
+O risco de reidentificação pode ser medido via diferentes métricas, que consideram os diferentes tipos de ameaças e os
+seus respetivos impactos. Nesta subsecção, vamos explorar os possíveis riscos, como eles são medidos e como
+essa avaliação pode ser usada para tomar decisões informadas sobre a anonimização dos dados. Além disso, discutiremos
+como as estatísticas de risco podem ser usadas para comunicar o nível de segurança dos dados anonimizados aos
+'*stakeholders*' envolvidos.
+
+#### Risco de Ser Acusado de um Crime (*Prosecutor Risk*)
+
+O risco de ser acusado de um crime é uma das principais ameaças à privacidade dos dados pessoais. Esta ameaça pode
+ser causada por um ataque de [*'data mining'*](https://en.wikipedia.org/wiki/Data_mining) ou por um [*'data
+leak'*](https://en.wikipedia.org/wiki/Data_leak).
+
+#### Risco de Ser Exposto por um Jornalista (*Journalist Risk*)
+
+O risco de ser exposto por um jornalista é uma ameaça à privacidade dos dados pessoais que pode ser causada por um
+[*'data leak'*](https://en.wikipedia.org/wiki/Data_leak).
+
+#### Risco de Ser Exposto por um Marketer (*Marketer Risk*)
+
+O risco de ser exposto por um marketer é uma ameaça à privacidade dos dados pessoais que pode ser causada por um
+[*'data leak'*](https://en.wikipedia.org/wiki/Data_leak).
+
+### Nível de Qualidade do Conjunto de Dados Anonimizados
+
+A avaliação da qualidade do conjunto de dados anonimizados é outra estatística crítica numa aplicação de automatização
+de processos de anonimização. A qualidade do conjunto de dados anonimizados é uma medida da eficácia da anonimização em
+preservar a privacidade dos indivíduos enquanto mantém a utilidade dos dados. Nesta subsecção, vamos explorar as
+principais métricas utilizadas para avaliar a qualidade do conjunto de dados anonimizados, incluindo a taxa de
+generalização, a taxa de detalhe e a taxa de identificabilidade. Discutiremos como essas métricas podem ser usadas para
+encontrar um equilíbrio entre privacidade e utilidade dos dados, e como a avaliação da qualidade do conjunto de dados
+anonimizados pode ser usada para tomar decisões informadas sobre a seleção de técnicas de anonimização e a configuração
+de parâmetros.
+
+#### Taxa de Generalização (*Generalization Intensity*)
+
+A taxa de generalização é uma métrica que mede o nível de generalização aplicado aos dados originais para obter os dados
+anonimizados.
+
+Uma taxa de generalização alta significa que os dados foram fortemente generalizados, resultando numa perda
+significativa de detalhes relativamente aos dados originais. Uma taxa de generalização baixa significa que os dados
+foram menos generalizados, mantendo mais precisão em relação aos dados originais.
+
+#### Taxa de Detalhe (*Granularity*)
+
+A taxa de detalhe é uma métrica que mede o grau de precisão dos dados anonimizados relativamente aos dados originais.
+
+Uma alta taxa de detalhe significa que os dados anonimizados mantêm muitos detalhes relativamente aos dados originais,
+enquanto uma taxa de detalhe baixa significa que os dados anonimizados são mais generalizados com menos detalhes
+relativamente aos dados originais.
+
+#### Taxa de Identificabilidade (*Discernability*)
+
+A taxa de identificabilidade é uma métrica que mede a facilidade com que os indivíduos podem ser identificados a partir
+dos dados anonimizados.
+
+Uma alta taxa de identificabilidade significa haver um alto risco de reidentificação dos indivíduos, ou seja, facilmente
+é possível identificar as informações pessoais de uma pessoa a partir dos dados anonimizados. Por outro lado, uma taxa
+de identificabilidade baixa significa ser improvável que as informações pessoais dos indivíduos possam ser identificadas
+a partir dos dados anonimizados.
 
 ## Auxílios
 

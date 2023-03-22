@@ -3,9 +3,13 @@ import org.deidentifier.arx.*;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.aggregates.quality.QualityMeasureColumnOriented;
+import org.deidentifier.arx.aggregates.quality.QualityMeasureRowOriented;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.risk.RiskEstimateBuilder;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -50,7 +54,7 @@ public class Setup {
                 case 3 -> defineHierarquias(dados);
                 case 4 -> anonimizarDados(dados);
                 case 5 -> exportarDados(dados);
-                case 6 -> gerarEstatisticas(dados,dados);
+                case 6 -> gerarEstatisticas(dados, dados);
                 case 7 -> System.out.println("Até à próxima!");
                 default -> System.out.println("Opção inválida");
             }
@@ -248,10 +252,40 @@ public class Setup {
 
     }
 
-    public int dadosSuprimidos(Data dados) {
+    public void gerarEstatisticas(Data dadosOriginais, Data dadosAnonimizados) {
+        // Exibir a quantidade de dados restantes e suprimidos em relação ao original
+        int dadosSuprimidos = estatisticasDadosSuprimidos(dadosAnonimizados);
+        int tamanhoOriginal = dadosAnonimizados.getHandle().getNumRows();
+        System.out.println("Number of original records: " + dadosOriginais.getHandle().getNumRows());
+        System.out.println("Number of measurements: (inc. Supressed)" + tamanhoOriginal);
+        System.out.println("Number of measurements: (exc. Supressed)" + (tamanhoOriginal - dadosSuprimidos));
+
+        DataHandle handleAnonimizado = dadosAnonimizados.getHandle();
+        DataHandle handleOriginal = dadosOriginais.getHandle();
+        // Exibir o risco estimado de reidentificação ('prosecutor risk', 'journalist risk', 'marketer risk')
+        // Path process -> DataHandle -> RiskEstimate -> RiskModelSampleRisks
+        RiskEstimateBuilder estimativa = handleAnonimizado.getRiskEstimator();
+        System.out.println("Prosecutor risk: " + estimativa.getSampleBasedReidentificationRisk().getEstimatedProsecutorRisk());
+        System.out.println("Journalist risk: " + estimativa.getSampleBasedReidentificationRisk().getEstimatedJournalistRisk());
+        System.out.println("Marketer risk: " + estimativa.getSampleBasedReidentificationRisk().getEstimatedMarketerRisk());
+
+
+        // Exibir nível de qualidade do conjunto de dados anonimizados
+        // Path process -> DataHandle -> StatisticsBuilder -> StatisticsQuality
+        StatisticsBuilder estatisticas = handleAnonimizado.getStatistics();
+
+
+        // Atribute-level quality (Column Oriented)
+        estatisticasQualidadeAtributos(dadosAnonimizados, estatisticas);
+
+        // Record-level quality (Row Oriented)
+        estatisticasQualidadeRegistos(dadosAnonimizados, estatisticas);
+    }
+
+    public int estatisticasDadosSuprimidos(Data dados) {
         int dadosSuprimidos = 0;
         int tamanhoOriginal = dados.getHandle().getNumRows();
-        for (int index = 0 ; index < tamanhoOriginal ; index++) {
+        for (int index = 0; index < tamanhoOriginal; index++) {
             if (dados.getHandle().isSuppressed(index)) {
                 dadosSuprimidos++;
             }
@@ -259,20 +293,27 @@ public class Setup {
         return dadosSuprimidos;
     }
 
-    public void gerarEstatisticas(Data dadosOriginais, Data dadosAnonimizados) {
-        // Exibir a quantidade de dados restantes e suprimidos em relação ao original
-        int dadosSuprimidos = dadosSuprimidos(dadosAnonimizados);
-        int tamanhoOriginal = dadosAnonimizados.getHandle().getNumRows();
-        System.out.println("Number of original records: " + dadosOriginais.getHandle().getNumRows());
-        System.out.println("Number of measurements: (inc. Supressed)" + tamanhoOriginal);
-        System.out.println("Number of measurements: (exc. Supressed)" + (tamanhoOriginal - dadosSuprimidos));
+    public void estatisticasQualidadeAtributos(Data dados, StatisticsBuilder estatisticas) {
+        QualityMeasureColumnOriented intensidadeGeneralizacao = estatisticas.getQualityStatistics().getGeneralizationIntensity();
+        QualityMeasureColumnOriented falhas = estatisticas.getQualityStatistics().getMissings();
+        QualityMeasureColumnOriented entropia = estatisticas.getQualityStatistics().getNonUniformEntropy();
+        QualityMeasureColumnOriented erroQuadratico = estatisticas.getQualityStatistics().getAttributeLevelSquaredError();
 
-        // Exibir o risco estimado de reidentificação ('prosecutor risk', 'journalist risk', 'marketer risk')
-        // Path process -> DataHandle -> RiskEstimate -> RiskModelSampleRisks
+        for (String atributo : dados.getDefinition().getQuasiIdentifyingAttributes()) {
+            System.out.println("Attribute: " + atributo + " - Generalization Intensity: " + intensidadeGeneralizacao.getValue(atributo)
+                    + " - Missings: " + falhas.getValue(atributo) + " - Non-Uniform Entropy: " + entropia.getValue(atributo)
+                    + " - Attribute Level Squared Error: " + erroQuadratico.getValue(atributo));
+        }
+    }
 
+    public void estatisticasQualidadeRegistos(Data dados, StatisticsBuilder estatisticas) {
+        QualityMeasureRowOriented identificabilidade = estatisticas.getQualityStatistics().getDiscernibility();
+        QualityMeasureRowOriented tamanhoDaClasse = estatisticas.getQualityStatistics().getAverageClassSize();
+        QualityMeasureRowOriented erroQuadratico = estatisticas.getQualityStatistics().getRecordLevelSquaredError();
 
-        // Exibir nível de qualidade do conjunto de dados anonimizados
-        // Path process -> DataHandle -> StatisticsBuilder -> StatisticsQuality
+        System.out.println("Generalization Intensity: " + identificabilidade.getValue());
+        System.out.println("Average Class Size: " + tamanhoDaClasse.getValue());
+        System.out.println("Record level Squared Error: " + erroQuadratico.getValue());
     }
 
     public static void exportarDados(Data dados) {
