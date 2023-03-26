@@ -252,6 +252,30 @@ public class Setup {
 
     }
 
+    public ARXResult anonimizarPorK(Data dados, int valorK) throws IOException {
+        ARXAnonymizer anonimizador = new ARXAnonymizer();
+        ARXConfiguration configuracoes = ARXConfiguration.create();
+        configuracoes.addPrivacyModel(new KAnonymity(valorK));
+        configuracoes.setSuppressionLimit(0.01d); // 1% de linhas suprimidas
+        return anonimizador.anonymize(dados, configuracoes);
+    }
+
+    public ARXResult anonimizarPorL(Data dados, int valorL, String nomeVariavel) throws IOException {
+        ARXAnonymizer anonimizador = new ARXAnonymizer();
+        ARXConfiguration configuracoes = ARXConfiguration.create();
+        configuracoes.addPrivacyModel(new DistinctLDiversity(nomeVariavel, valorL));
+        configuracoes.setSuppressionLimit(0.01d); // 1% de linhas suprimidas
+        return anonimizador.anonymize(dados, configuracoes);
+    }
+
+    public ARXResult anonimizarPorT(Data dados, double valorT, String nomeVariavel) throws IOException {
+        ARXAnonymizer anonimizador = new ARXAnonymizer();
+        ARXConfiguration configuracoes = ARXConfiguration.create();
+        configuracoes.addPrivacyModel(new EqualDistanceTCloseness(nomeVariavel, valorT));
+        configuracoes.setSuppressionLimit(0.01d); // 1% de linhas suprimidas
+        return anonimizador.anonymize(dados, configuracoes);
+    }
+
     public void gerarEstatisticas(Data dadosOriginais, Data dadosAnonimizados) {
         // Exibir a quantidade de dados restantes e suprimidos em relação ao original
         int dadosSuprimidos = estatisticasDadosSuprimidos(dadosAnonimizados);
@@ -279,7 +303,7 @@ public class Setup {
         estatisticasQualidadeAtributos(dadosAnonimizados, estatisticas);
 
         // Record-level quality (Row Oriented)
-        estatisticasQualidadeRegistos(dadosAnonimizados, estatisticas);
+        estatisticasQualidadeRegistos(estatisticas);
     }
 
     public int estatisticasDadosSuprimidos(Data dados) {
@@ -306,7 +330,7 @@ public class Setup {
         }
     }
 
-    public void estatisticasQualidadeRegistos(Data dados, StatisticsBuilder estatisticas) {
+    public void estatisticasQualidadeRegistos(StatisticsBuilder estatisticas) {
         QualityMeasureRowOriented identificabilidade = estatisticas.getQualityStatistics().getDiscernibility();
         QualityMeasureRowOriented tamanhoDaClasse = estatisticas.getQualityStatistics().getAverageClassSize();
         QualityMeasureRowOriented erroQuadratico = estatisticas.getQualityStatistics().getRecordLevelSquaredError();
